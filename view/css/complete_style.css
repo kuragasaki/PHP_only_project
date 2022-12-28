@@ -1,0 +1,20 @@
+﻿@charset "utf-8";
+
+#complete {
+	margin: 3% auto;
+	text-align: center;
+}
+
+#complete p {
+	font-size: 48px;
+}
+
+#over_p {
+	margin-bottom: -20px;
+	margin-left: -10%;
+}
+
+#under_p {
+	margin-top: -20px;
+	margin-left: 10%;
+}

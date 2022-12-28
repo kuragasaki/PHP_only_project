@@ -1,0 +1,61 @@
+﻿@charset "utf-8";
+
+#errorMessage {
+    color: red;
+}
+
+#user_infos {
+	margin: 20px 15% 0;
+	padding: auto;
+}
+
+section {
+	text-align: center;
+	height: 350px;
+}
+
+dl {
+	margin: 10px 30% 0;
+}
+
+dt {
+	float: left;
+	clear: left;
+	width: 150px;
+	height: 30px;
+	margin-right: 10px;
+}
+
+dd {
+	float: left;
+	width: 150px;
+}
+
+dd input {
+	width: 100%;
+}
+
+.p-postal-code {
+	width: 33%;
+	margin: 0 3%;
+}
+
+.item_button {
+	padding-top: 3%;
+	clear: both;
+}
+
+.items_table_button {
+	width: 120px;
+	height: 30px;
+	border-radius: 1rem;
+	font-size: 16px;
+	color: #fff;
+	background: #f39800;
+	margin: 5px;
+}
+
+.items_table_button:hover {
+	color: #fff;
+	background: #ffa50e;
+}

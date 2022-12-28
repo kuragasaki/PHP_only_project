@@ -1,0 +1,173 @@
+﻿@charset "utf-8";
+
+header {
+	height: 150px;
+	width: 100%;
+	position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+}
+
+#title_position {
+	margin: 2% 15% 0px;
+}
+
+.header_upper {
+	font-size: 48px;
+}
+
+.header_upper a {
+	text-decoration: none;
+	color : inherit;
+}
+
+h1 {
+	width: 200px;
+	height: 120px;
+	display: inline;
+}
+
+h1 span {
+	padding: 0;
+}
+
+.h1_top {
+	display: block;
+	margin-bottom: -90px;
+	padding: 0;
+	width: 150px;
+}
+
+.h1_buttom {
+	margin-right: 150px;
+}
+
+.h1_common {
+	margin-left: 20px;
+}
+
+.search_form {
+	text-align: center;
+	display: inline-flex;
+	margin-left: auto;
+}
+
+#word_input {
+	width: 200px;
+	height: 15px;
+	border: 1px solid #bbb;
+    padding: 0.5em;          /* 内側の余白量 */
+}
+
+#sbtn2{
+	display:inline-block;
+	height: 30px;
+	width: 30px;
+	background:#7fbfff;
+	border:none;
+	border-radius:0 30px 30px 0;
+	margin-left: -6px;
+}
+
+#sbtn2 .fa-search{
+	font-size:15px;	
+}
+
+#sbtn2:hover{
+	color:#7fbfff;
+}
+
+.header_a_style {
+	margin: 0 3px;
+}
+
+.header_button {
+	width: 100px;
+	height: 30px;
+	border-radius: 1rem;
+	font-size: 16px;
+	color: #fff;
+	background: #f39800;
+}
+
+.header_button:hover {
+	color: #fff;
+	background: #ffa50e;
+}
+
+.cart_btn-tag {
+    line-height: 1.5;
+    position: relative;
+    display: inline-block;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
+    text-align: center;
+    vertical-align: middle;
+    text-decoration: none;
+    color: #212529;
+    border-radius: 1rem;
+    padding: 0.2rem 1rem 0.2rem 50px;
+    color: #fff;
+    background: #f39800;
+}
+
+
+.cart_btn-tag:before {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 40px;
+	height: 100%;  
+	content: "";
+	border-radius: 0.5rem 0 0 0.5rem;
+	background: rgba(0, 0, 0, 0.07);
+  }
+  
+.cart_btn-tag:hover {
+	color: #fff;
+	background: #ffa50e;
+  }
+  
+.cart_btn-tag i {
+	font-size: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 40px;
+	padding: 0.5rem 0;  
+	text-align: center;
+	letter-spacing: 0;
+}
+
+
+nav {
+	height: 31px;
+	width: 100%;
+	background-color: #999;
+}
+
+#nav_position {
+	margin: 0 15%;
+}
+
+.main_manu {
+	text-align: center;
+	margin-left: 13%;
+	margin-right: auto;
+}
+
+.main_manu li {
+	width: 150px;
+	text-align: center;
+	background-color: #333;
+	float: left;
+	line-height: 30px;
+	border: 0.5px solid #fff ;
+	font-size: 14px;
+	display: inline-block;
+	color: #fff;
+}
