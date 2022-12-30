@@ -1,3 +1,20 @@
+<?php
+    include_once "../dao/items_dao.php"
+
+    $keywords = $_GET["keyword"];
+
+    ## チェックなどはサービスクラスを作ってそちらに任せる？
+    # 入力チェック
+    if (!strlen($keywords)) {
+        $errorMsg = "キーワードを入力してから「検索」ボタンをクリックしてください";
+    }
+    $keywords_array = preg_split("/[\s]/", $keywords);
+
+    # 検索処理
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="ja">
   <head>
@@ -24,7 +41,7 @@
           </a>
         </h1>
         <div class="search_form" >
-          <form action="./" >
+          <form action="./index" >
             <input id="word_input" name="keyword" type="text" maxsize="200" placeholder="search word" />
             <button id="sbtn2" type="submit"><i class="fas fa-search"></i></button>
           </form>
@@ -189,7 +206,9 @@
         </div>
       </nav>
     </header>
-
+    <div id="error_message">
+      <?php echo $errorMsg; ?>
+    </div>
     <form action="cart_view.html" id="itemInfo" >
       <table id="itemInfosTbl">
         <caption>
@@ -216,61 +235,40 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td class="itemId">
-              <input type="checkbox" name="itemId" value="itemId1_1_1" />
-            </td>
-            <td class="item_data">
-              <a href="item_view.html">
-                <img src="" />
-                Item Image A
-              </a>
-            </td>
-            <td class="item_data">
-              <a href="item_view.html">
-                Item Name A
-              </a>
-            </td>
-            <td class="item_data">
-              Category 1-1-1
-            </td>
-            <td class="item_data">
-              $100
-            </td>
-            <td class="item_data">
-              2022/01/01
-            </td>
-          </tr>
-          <tr class="data_background">
-            <td class="itemId">
-              <input type="checkbox" name="itemId" value="itemId1_1_２" />
-            </td>
-            <td class="item_data">
-              <a href="">
-                <img src="" />
-                Item Image B
-              </a>
-            </td>
-            <td class="item_data">
-              <a href="">
-                Item Name B
-              </a>
-            </td>
-            <td class="item_data">
-              Category 1-1-2
-            </td>
-            <td class="item_data">
-              $100
-            </td>
-            <td class="item_data">
-              2022/01/01
-            </td>
-          </tr>
-          <tr>
-            <td colspan="6">
-              以下、省略(18行分)
-            </td>
-          </tr>
+          <?php foreach( $fruits as $index => $nalue ): ?>
+            <?php if( $index% 2 == 0 ): ?>
+            <tr class="data_background">
+            <?php else: ?>
+            <tr>
+            <?php endif; ?>
+
+              <td><?php echo $nalue; ?></td>
+              <td class="itemId">
+                <input type="checkbox" name="itemId" value="itemId1_1_1" />
+              </td>
+              <td class="item_data">
+                <a href="item_view.html">
+                  <img src="" />
+                  Item Image A
+                </a>
+              </td>
+              <td class="item_data">
+                <a href="item_view.html">
+                  Item Name A
+                </a>
+              </td>
+              <td class="item_data">
+                Category 1-1-1
+              </td>
+              <td class="item_data">
+                $100
+              </td>
+              <td class="item_data">
+                2022/01/01
+              </td>
+            </tr>
+
+          <?php endforeach; ?>
         </tbody>
       </table>
 
