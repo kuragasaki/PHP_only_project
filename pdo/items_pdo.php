@@ -3,14 +3,15 @@
 // 先ほど作成したPDOインスタンス作成をそのまま使用します
 require_once 'connect_pdo.php';
 
-// SQL文を準備します。「:id」がプレースホルダーです。
-$sql = 'SELECT * FROM user WHERE id < :id';
+
+// SQL文を準備します。「:keyword」がプレースホルダーです。
+$sql = 'SELECT * FROM item WHERE name like ":keyword"';
 // PDOStatementクラスのインスタンスを生成します。
 $prepare = $dbh->prepare($sql);
 
 // PDO::PARAM_INTは、SQL INTEGER データ型を表します。
 // SQL文の「:id」を「3」に置き換えます。つまりはidが3より小さいレコードを取得します。
-$prepare->bindValue(':id', 3, PDO::PARAM_INT);
+$prepare->bindValue(':keyword', 3, PDO::PARAM_INT);
 
 // プリペアドステートメントを実行する
 $prepare->execute();

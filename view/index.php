@@ -1,5 +1,5 @@
 <?php
-    include_once "../dao/items_dao.php"
+    include_once "../dao/items_pdo.php"
 
     $keywords = $_GET["keyword"];
 
@@ -11,6 +11,61 @@
     $keywords_array = preg_split("/[\s]/", $keywords);
 
     # 検索処理
+
+    # クラス作成方法
+    class ItemsPdo {
+    // 先ほど作成したPDOインスタンス作成をそのまま使用します
+    require_once 'connect_pdo.php';
+
+      static function get_items_bind_keyword($keywords[]) {
+
+        # 型が配列かどうかチェック、要素数が１以上かチェック
+        if ($keywords) {
+
+          # チェック違反の場合、エラーメッセージを返す
+        }
+
+        $where_sql = 'WHERE name like :keyword0';
+
+        # 要素数チェック
+        for ($index = 1; $index < $keywords; $index++) {
+          $where_sql += ' or name like :keyword'.$index;
+        }
+
+        // SQL文を準備します。「:keyword」がプレースホルダーです。
+        $sql = 'SELECT * FROM item'
+         'WHERE name like ":keyword"';
+        // PDOStatementクラスのインスタンスを生成します。
+        $prepare = $dbh->prepare($sql);
+        
+        // PDO::PARAM_INTは、SQL INTEGER データ型を表します。
+        // SQL文の「:id」を「3」に置き換えます。つまりはidが3より小さいレコードを取得します。
+        $prepare->bindValue(':keyword', 3, PDO::PARAM_INT);
+        
+        // プリペアドステートメントを実行する
+        $prepare->execute();
+        
+        // PDO::FETCH_ASSOCは、対応するカラム名にふられているものと同じキーを付けた 連想配列として取得します。
+        $result = $prepare->fetchAll(PDO::FETCH_ASSOC);
+        
+        // 結果を出力
+        var_dump($result);
+
+      } 
+    
+    }
+
+
+    # ファイル読み込み方法
+    $filePoint = fopen("dbsetting.txt", "r");
+    $line = array();
+    if ($filePoint) {
+      while (!feof($filePoint)) {
+        $line[] = fgets($filePoint)
+      }
+      fclose($filePoint)
+    }
+
 
 
 ?>
