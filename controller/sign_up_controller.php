@@ -16,5 +16,5 @@
     # mail address 未登録状態のチェック
 
     # 画面遷移
-    include "../confirm.html";
+    // include "../confirm.html";
 ?>
