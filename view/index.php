@@ -1,73 +1,25 @@
 <?php
-    include_once "../dao/items_pdo.php"
+    // include "../pdo/item_pdo.php";
+    include("../pdo/item_pdo.php");
 
-    $keywords = $_GET["keyword"];
+    // $keywords = ;
 
     ## チェックなどはサービスクラスを作ってそちらに任せる？
+
+    $itemPdo = new ItemPdo();
+
     # 入力チェック
-    if (!strlen($keywords)) {
-        $errorMsg = "キーワードを入力してから「検索」ボタンをクリックしてください";
-    }
-    $keywords_array = preg_split("/[\s]/", $keywords);
+    if (array_key_exists("keyword", $_GET)) {
+        $keywords_array = preg_split("/[\s]/", $_GET["keyword"]);
 
-    # 検索処理
-
-    # クラス作成方法
-    class ItemsPdo {
-    // 先ほど作成したPDOインスタンス作成をそのまま使用します
-    require_once 'connect_pdo.php';
-
-      static function get_items_bind_keyword($keywords[]) {
-
-        # 型が配列かどうかチェック、要素数が１以上かチェック
-        if ($keywords) {
-
-          # チェック違反の場合、エラーメッセージを返す
-        }
-
-        $where_sql = 'WHERE name like :keyword0';
-
-        # 要素数チェック
-        for ($index = 1; $index < $keywords; $index++) {
-          $where_sql += ' or name like :keyword'.$index;
-        }
-
-        // SQL文を準備します。「:keyword」がプレースホルダーです。
-        $sql = 'SELECT * FROM item'
-         'WHERE name like ":keyword"';
-        // PDOStatementクラスのインスタンスを生成します。
-        $prepare = $dbh->prepare($sql);
-        
-        // PDO::PARAM_INTは、SQL INTEGER データ型を表します。
-        // SQL文の「:id」を「3」に置き換えます。つまりはidが3より小さいレコードを取得します。
-        $prepare->bindValue(':keyword', 3, PDO::PARAM_INT);
-        
-        // プリペアドステートメントを実行する
-        $prepare->execute();
-        
-        // PDO::FETCH_ASSOCは、対応するカラム名にふられているものと同じキーを付けた 連想配列として取得します。
-        $result = $prepare->fetchAll(PDO::FETCH_ASSOC);
-        
-        // 結果を出力
-        var_dump($result);
-
-      } 
-    
+        # 検索処理
+        // $item_list = ItemPdo.get_items_bind_keyword($keywords_array, $order_select = [], $page_number = 1);
+        $item_list = $itemPdo->get_items_bind_keyword($keywords_array);
+    } else {
+        $item_list = $itemPdo->get_items();
     }
 
-
-    # ファイル読み込み方法
-    $filePoint = fopen("dbsetting.txt", "r");
-    $line = array();
-    if ($filePoint) {
-      while (!feof($filePoint)) {
-        $line[] = fgets($filePoint)
-      }
-      fclose($filePoint)
-    }
-
-
-
+    $errorMsg = "";
 ?>
 
 <!DOCTYPE html>
@@ -290,16 +242,15 @@
           </tr>
         </thead>
         <tbody>
-          <?php foreach( $fruits as $index => $nalue ): ?>
-            <?php if( $index% 2 == 0 ): ?>
+          <?php for($index = 0; $index < count($item_list); $index++ ): ?>
+            <?php if( ($index + 1) % 2 == 0 ): ?>
             <tr class="data_background">
             <?php else: ?>
             <tr>
             <?php endif; ?>
 
-              <td><?php echo $nalue; ?></td>
               <td class="itemId">
-                <input type="checkbox" name="itemId" value="itemId1_1_1" />
+                <input type="checkbox" name="itemId" value='<?= $item_list[$index]["item_id"]; ?>' />
               </td>
               <td class="item_data">
                 <a href="item_view.html">
@@ -309,21 +260,21 @@
               </td>
               <td class="item_data">
                 <a href="item_view.html">
-                  Item Name A
+                  <?= $item_list[$index]["item_name"]; ?>
                 </a>
               </td>
               <td class="item_data">
-                Category 1-1-1
+                <?= $item_list[$index]["category_name"]; ?>
               </td>
               <td class="item_data">
-                $100
+                <?= $item_list[$index]["price"]; ?>
               </td>
               <td class="item_data">
-                2022/01/01
+                <?= $item_list[$index]["create_date"]; ?>
               </td>
             </tr>
 
-          <?php endforeach; ?>
+          <?php endfor; ?>
         </tbody>
       </table>
 
@@ -368,38 +319,5 @@
         © All rights reserved by Example EC Site
       </p>
     </footer>
-
-    <!-- Load javascripts at bottom, this will reduce page load time -->
-    <!-- BEGIN CORE PLUGINS (REQUIRED FOR ALL PAGES) -->
-    <!--[if lt IE 9]>
-    <script src="assets/plugins/respond.min.js"></script>  
-    <![endif]-->
-    <!-- <script src="assets/plugins/jquery.min.js" type="text/javascript"></script>
-    <script src="assets/plugins/jquery-migrate.min.js" type="text/javascript"></script>
-    <script src="assets/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>      
-    <script src="assets/corporate/scripts/back-to-top.js" type="text/javascript"></script>
-    <script src="assets/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script> -->
-    <!-- END CORE PLUGINS -->
-
-    <!-- BEGIN PAGE LEVEL JAVASCRIPTS (REQUIRED ONLY FOR CURRENT PAGE) -->
-    <!-- <script src="assets/plugins/fancybox/source/jquery.fancybox.pack.js" type="text/javascript"></script>pop up
-    <script src="assets/plugins/owl.carousel/owl.carousel.min.js" type="text/javascript"></script> -->
-    <!-- slider for products -->
-    <!-- <script src='assets/plugins/zoom/jquery.zoom.min.js' type="text/javascript"></script> -->
-    <!-- product zoom -->
-    <!-- <script src="assets/plugins/bootstrap-touchspin/bootstrap.touchspin.js" type="text/javascript"></script> -->
-    <!-- Quantity -->
-
-    <!-- <script src="assets/corporate/scripts/layout.js" type="text/javascript"></script>
-    <script src="assets/pages/scripts/bs-carousel.js" type="text/javascript"></script>
-    <script type="text/javascript">
-        jQuery(document).ready(function() {
-            Layout.init();    
-            Layout.initOWL();
-            Layout.initImageZoom();
-            Layout.initTouchspin();
-            Layout.initTwitter();
-        });
-    </script> -->
   </body>
 </html>
