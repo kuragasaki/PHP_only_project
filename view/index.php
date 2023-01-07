@@ -8,17 +8,29 @@
 
     $itemPdo = new ItemPdo();
 
+    $categoryCd = $_GET["categoryCd"];
+    $pageNumber = $_GET["pageNumber"];
     # 入力チェック
     if (array_key_exists("keyword", $_GET)) {
-        $keywords_array = preg_split("/[\s]/", $_GET["keyword"]);
+
+      $keywords_array = preg_split("/[\s]/", $_GET["keyword"]);
+              # 型が配列かどうかチェック、要素数が１以上かチェック
+              if ($keywords) {
+                return "";
+            # チェック違反の場合、エラーメッセージを返す
+            }
+    
+    
+
 
         # 検索処理
         // $item_list = ItemPdo.get_items_bind_keyword($keywords_array, $order_select = [], $page_number = 1);
         $item_list = $itemPdo->get_items_bind_keyword($keywords_array);
     } else {
+        $item_count = $itemPdo->get_count_items();
         $item_list = $itemPdo->get_items();
     }
-
+    echo $item_count;
     $errorMsg = "";
 ?>
 
@@ -65,7 +77,9 @@
         <div id="nav_position">
           <ul class="main_manu">
             <li>
-              Category 1
+              <a href="./index.php?categoryCd='<?= "01" ?>'" >
+                Category 1
+              </a>
               <!-- <ul>
                 <li>
                   Category 1-1
