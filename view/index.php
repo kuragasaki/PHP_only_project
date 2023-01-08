@@ -8,29 +8,40 @@
 
     $itemPdo = new ItemPdo();
 
-    $categoryCd = $_GET["categoryCd"];
-    $pageNumber = $_GET["pageNumber"];
-    # 入力チェック
-    if (array_key_exists("keyword", $_GET)) {
+    $keywords_array = null;
+    $categoryCd = null;
+    $pageNumber = -1;
 
+    if (array_key_exists("keyword", $_GET) {
       $keywords_array = preg_split("/[\s]/", $_GET["keyword"]);
-              # 型が配列かどうかチェック、要素数が１以上かチェック
-              if ($keywords) {
-                return "";
-            # チェック違反の場合、エラーメッセージを返す
-            }
-    
-    
+      # 型が配列かどうかチェック、要素数が１以上かチェック
+      if ($keywords) {
+        return "";
+      }
+    }
 
+    if (array_key_exists("categoryCd", $_GET) {
+      $categoryCd = $_GET["categoryCd"];
+    }
+
+    if (array_key_exists("pageNumber", $_GET) {
+      $pageNumber = $_GET["pageNumber"];
+    }
+
+    # 入力チェック
+    if (is_null($keyword) && is_null($$categoryCd) && $pageNumber <= 0) {
+
+      $item_count = $itemPdo->get_count_items();
+      $item_list = $itemPdo->get_items();
 
         # 検索処理
-        // $item_list = ItemPdo.get_items_bind_keyword($keywords_array, $order_select = [], $page_number = 1);
-        $item_list = $itemPdo->get_items_bind_keyword($keywords_array);
     } else {
-        $item_count = $itemPdo->get_count_items();
-        $item_list = $itemPdo->get_items();
+      // $item_list = ItemPdo.get_items_bind_keyword($keywords_array, $order_select = [], $page_number = 1);
+      $items_array = $itemPdo->get_items_bind_keyword($keywords_array);
+
+      $item_count = $items_array['count'];
+      $item_list = $items_array['item_list'];
     }
-    echo $item_count;
     $errorMsg = "";
 ?>
 

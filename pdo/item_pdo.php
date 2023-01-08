@@ -13,7 +13,7 @@ class ItemPdo {
         FROM item_info";
 
     private string $select_table = "SELECT item_info.item_id AS item_id
-        , item_info.item_name AS item_name
+        , item_detail.item_name AS item_name
         , category.category_name AS category_name
         , item_detail.price AS price
         , item_info.create_date AS create_date
@@ -94,28 +94,27 @@ class ItemPdo {
         return $result;
     }
 
-    function get_item_count_and_items($keywords, $select_category, $order_select = [], $page_number = 1) {
-        $where_category_cd = $this->create_sql_where_category_cd($select_category);
+    function get_item_count_and_items($keywords = null, $select_category = null, $order_select = [], $page_number = 1) {
+        $where_bind_array = array();
+        $where_sql = '';
+        $where_category_cd = '';
 
-        $where_bind_map = array(
-            ":keyword0" => $keywords[0]
-            , ":category_cd" => $select_category
-        );
+        if (!is_null($keywords)) {
+            $keyword_array = create_sql_where_keyword($keywords);
+            $where_bind_array = array_merge($where_bind_array, $keyword_array['where_bind_array']);
+            $where_sql = $keyword_array['where_sql'];
+        }
 
-        $where_sql = 'WHERE name like :keyword0';
-        
-        # 要素数チェック
-        for ($index = 1; $index < $keywords; $index++) {
-            $where_sql += ' or name like :keyword'.$index;
-
-            $where_bind_array[":keyword".$index] = $keywords[$index];
+        if (!is_null($select_category)) {
+            $where_bind_array[":category_cd"] = $select_category;
+            $where_category_cd = $this->create_sql_where_category($select_category);
         }
 
         // SQL文の一部を準備
         $where_count_sql = "$this->inner_join_category
-                $where_category_cd
-                $this->inner_join_item_detail
-                $where_sql";
+            $where_category_cd
+            $this->inner_join_item_detail
+            $where_sql";
 
         $dbh = $this->connectPdo->get_connect_info();
 
@@ -139,8 +138,18 @@ class ItemPdo {
         $where_bind_array[":offset_index"] = ($page_number - 1) * 20;
         $offset_start = "OFFSET :offset_index";
 
+        // SQL文の一部を準備
+        $where_items_sql = "$where_count_sql
+            $order_by
+            $limit
+            $offset_start";
 
+        $items = $this->get_items_bind_keyword($dbh, $where_items_sql, $where_bind_array);
 
+        return array(
+            'count' -> $count
+            ,'item_list' -> $items
+        );
     }
 
     private function get_items_bind_count($dbh, $where_count_sql, $where_bind_array) {
@@ -152,7 +161,7 @@ class ItemPdo {
         // PDOStatementクラスのインスタンスを生成します。
         $prepare = $dbh->prepare($count_sql);
 
-        $this->prepare_bind_value($prepare, $where_bind_array) {
+        $this->prepare_bind_value($prepare, $where_bind_array);
         // // 値のbind設定
         // foreach ($where_bind_array as $key -> $value) {
         //     $bind_value = $value;
@@ -170,67 +179,54 @@ class ItemPdo {
         return $prepare->fetchColumn();
     }
 
-    private function get_items_bind_keyword($dbh, $select_table, $where_bind_array) {
+    private function get_items_bind_keyword($dbh, $where_items_sql, $where_bind_array) {
 
         // SQL文を準備
-        $sql = "$select_table
-                $this->inner_join_category
-                $where_category_cd
-                $this->inner_join_item_detail
-                $where_sql
-                $order_by
-                $this->limit
-                $offset_start";
-
-
-        // TODO $dbh 変数を'connect_pdo.php'から取得する
-        $dbh = $this->connectPdo->get_connect_info();
-
-        if ($dbh instanceof string) {
-            return $dbh;
-        }
+        $sql = "$this->select_table
+            $where_items_sql";
 
         // PDOStatementクラスのインスタンスを生成します。
         $prepare = $dbh->prepare($sql);
 
-        // 値のbind設定
-        foreach ($where_bind_array as $key -> $value) {
-            $bind_value = $value;
-            if (strpos($key,'keyword') !== false) {
-                // PDO::PARAM_STRは、SQL 文字列 データ型を表します。
-                $bind_value = '%'. $bind_value .'%';
-            }
-            
-            $prepare->bindValue($key, $bind_value, PDO::PARAM_STR);
+        $this->prepare_bind_value($prepare, $where_bind_array);
 
-        }
-                    
         // プリペアドステートメントを実行する
         $prepare->execute();
         
         // PDO::FETCH_ASSOCは、対応するカラム名にふられているものと同じキーを付けた 連想配列として取得します。
         $result = $prepare->fetchAll(PDO::FETCH_ASSOC);
         
-        // 結果を出力
-        // var_dump($result);
-
         return $result;
     }
 
-    private function create_sql_where_category_cd($select_category) {
-        $add_where_category_cd = "";
-        if (!is_null($select_category)) {
-            $add_where_category_cd += ' AND ';
-            if (4 == mb_strlen($select_category)) {
-                $add_where_category_cd += "category.category_small_cd = :category_cd";
-            } else if (3 == mb_strlen($select_category)) {
-                $add_where_category_cd += "category.category_middle_cd = :category_cd";
-            } else {
-                $add_where_category_cd += "category.category_big_cd = :category_cd";
-            }
+    private function create_sql_where_keyword($keywords) {
+        $where_bind_array = array();
+        $where_sql = 'WHERE name like :keyword0';
+
+        # 要素数チェック
+        for ($index = 1; $index < $keywords; $index++) {
+            $where_sql += ' or name like :keyword'.$index;
+
+            $where_bind_array[":keyword".$index] = $keywords[$index];
         }
 
-        return $add_where_category_cd;
+        return array(
+            'where_sql' -> $where_sql
+            , 'where_bind_array' -> $where_bind_array
+        );
+    }
+
+    private function create_sql_where_category($select_category) {
+        $add_where_category += ' AND ';
+        if (4 == mb_strlen($select_category)) {
+            $add_where_category += "category.category_small_cd = :category_cd";
+        } else if (3 == mb_strlen($select_category)) {
+            $add_where_category += "category.category_middle_cd = :category_cd";
+        } else {
+            $add_where_category += "category.category_big_cd = :category_cd";
+        }
+
+        return $add_where_category;
     }
 
     private function prepare_bind_value($prepare, $where_bind_array) {
