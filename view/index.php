@@ -10,39 +10,78 @@
 
     $keywords_array = null;
     $categoryCd = null;
-    $pageNumber = -1;
+    $order_select = [];
+    $pageNumber = 1;
+    $urlParamterKeywordOrCategoryCd = "";
+    $urlParamterOrder = "";
+    $urlParamterPageNumber = "";
 
-    if (array_key_exists("keyword", $_GET) {
+    if (array_key_exists("keyword", $_GET)) {
       $keywords_array = preg_split("/[\s]/", $_GET["keyword"]);
-      # 型が配列かどうかチェック、要素数が１以上かチェック
-      if ($keywords) {
-        return "";
-      }
+
+      // ページ番号、または、ソートの際に使用
+      $urlParamterKeywordOrCategoryCd = "keyword=".$_GET["keyword"];
     }
 
-    if (array_key_exists("categoryCd", $_GET) {
+    if (array_key_exists("categoryCd", $_GET)) {
       $categoryCd = $_GET["categoryCd"];
+
+      // ページ番号、または、ソートの際に使用
+      $urlParamterKeywordOrCategoryCd = "categoryCd=".$_GET["categoryCd"];
     }
 
-    if (array_key_exists("pageNumber", $_GET) {
+    if (array_key_exists("orderTitle", $_GET)) {
+      print('array_key_exists(orderTitle, $_GET)');
+      $order_select['order'] = $_GET["orderTitle"];
+      $order_select['ascFlg'] = $_GET["ascFlg"]; // True = asc, False = desc
+
+      // ページ番号に使用
+      $urlParamterPageNumber = "orderTitle=".$_GET["orderTitle"];
+      $urlParamterPageNumber = $urlParamterPageNumber."&ascFlg=".$_GET["ascFlg"];
+    }
+
+    if (array_key_exists("pageNumber", $_GET)) {
       $pageNumber = $_GET["pageNumber"];
     }
-
+    
     # 入力チェック
-    if (is_null($keyword) && is_null($$categoryCd) && $pageNumber <= 0) {
-
-      $item_count = $itemPdo->get_count_items();
-      $item_list = $itemPdo->get_items();
-
-        # 検索処理
-    } else {
-      // $item_list = ItemPdo.get_items_bind_keyword($keywords_array, $order_select = [], $page_number = 1);
-      $items_array = $itemPdo->get_items_bind_keyword($keywords_array);
+    if (isset($keyword) || isset($categoryCd) || $pageNumber > 1) {
+      if (isset($keyword)) {
+        $items_array = $itemPdo->get_item_count_and_items($keywords_array, null, $order_select, $pageNumber);
+      } else if (isset($categoryCd)) {
+        $items_array = $itemPdo->get_item_count_and_items(null, $categoryCd, $order_select, $pageNumber);
+      } else if ($pageNumber > 1) {
+        $items_array = $itemPdo->get_item_count_and_items(null, null, $order_select, $pageNumber);
+      }
 
       $item_count = $items_array['count'];
       $item_list = $items_array['item_list'];
+    } else {
+      $item_count = $itemPdo->get_count_items();
+      $item_list = $itemPdo->get_items();
     }
+
     $errorMsg = "";
+    $maxPageNumber = 1;
+
+    if ($item_count > 20) {
+      $maxPageNumber = $maxPageNumber / 20;
+
+      if ($item_count % 20 != 0) {
+        $maxPageNumber += 1;
+      }
+    }
+
+    if (!empty($urlParamterPageNumber)) {
+      $urlParamterPageNumber = "&".$urlParamterPageNumber;
+
+      if (!empty($urlParamterKeywordOrCategoryCd)) {
+        $urlParamterOrder = "&".$urlParamterKeywordOrCategoryCd;
+        $urlParamterPageNumber = $urlParamterPageNumber."&".$urlParamterKeywordOrCategoryCd;
+      }
+    } else if (!empty($urlParamterKeywordOrCategoryCd)) {
+      $urlParamterPageNumber = "&".$urlParamterKeywordOrCategoryCd;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -88,7 +127,7 @@
         <div id="nav_position">
           <ul class="main_manu">
             <li>
-              <a href="./index.php?categoryCd='<?= "01" ?>'" >
+              <a href="./index.php?categoryCd=01<?= $urlParamterOrder; ?>" class="header_category_link">
                 Category 1
               </a>
               <!-- <ul>
@@ -275,7 +314,7 @@
             <?php endif; ?>
 
               <td class="itemId">
-                <input type="checkbox" name="itemId" value='<?= $item_list[$index]["item_id"]; ?>' />
+                <input type="checkbox" name="itemId" value=<?= $item_list[$index]["item_id"]; ?> />
               </td>
               <td class="item_data">
                 <a href="item_view.html">
@@ -305,31 +344,39 @@
 
       <div class="page_link_area">
         <ul class="page_link_ui">
+
+        <?php if($pageNumber > 1 ): ?>
           <li class="page_pre">
-            <a href="">
+            <a href='./index.php?pageNumber=<?= ($pageNumber - 1).$urlParamterPageNumber; ?>'>
               前へ
             </a>
           </li>
+        <?php endif; ?>
+        <?php if($pageNumber > 1 ): ?>
+          <li class="page_pre">
+            <a href='./index.php?pageNumber=<?= ($pageNumber - 1).$urlParamterPageNumber; ?>'>
+              <?= ($pageNumber - 1); ?>
+            </a>
+          </li>
+        <?php endif; ?>
           <li class="page_cheese">
-            <a href="">
-              1
+            <?= $pageNumber; ?>
+          </li>
+        <?php if($pageNumber < $maxPageNumber ): ?>
+          <li class="page_pre">
+            <a href='./index.php?pageNumber=<?= ($pageNumber + 1).$urlParamterPageNumber; ?>'>
+              <?= ($pageNumber + 1); ?>
             </a>
           </li>
-          <li>
-            <a href="">
-              2
-            </a>
-          </li>
-          <li>
-            <a href="">
-              3
-            </a>
-          </li>
+        <?php endif; ?>
+
+        <?php if($pageNumber < $maxPageNumber ): ?>
           <li class="page_next">
-            <a href="">
+            <a href='./index.php?pageNumber=<?= ($pageNumber + 1).$urlParamterPageNumber; ?>'>
               次へ
             </a>
           </li>
+        <?php endif; ?>
         </ul>
       </div>
 

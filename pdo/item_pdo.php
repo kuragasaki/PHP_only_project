@@ -25,7 +25,7 @@ class ItemPdo {
     private string $inner_join_item_detail = "INNER JOIN item_detail
         ON item_info.item_id = item_detail.item_id";
     
-    private string $order_by = "ORDER BY item_id asc, create_date desc";
+    // private string $order_by = "ORDER BY item_id asc, create_date desc";
 
     private string $limit  = "LIMIT 20";
 
@@ -53,7 +53,6 @@ class ItemPdo {
         //     print("$dbh 接続先できない");
         // }
 
-
         // PDOStatementクラスのインスタンスを生成します。
         $prepare = $dbh->query($count_sql);
         
@@ -69,7 +68,6 @@ class ItemPdo {
         $sql = "$this->select_table
                 $this->inner_join_category
                 $this->inner_join_item_detail
-                $this->order_by
                 $this->limit";
 
         $dbh = $this->connectPdo->get_connect_info();
@@ -125,7 +123,7 @@ class ItemPdo {
         $count = $this->get_items_bind_count($dbh, $where_count_sql, $where_bind_array);
 
         $order_by = "";
-        if ($order_select) {
+        if (is_array($order_select) && $order_select) {
             $order_by = "order by ".$order_select['order'];
 
             if ($order_select['ascFlg']) {
@@ -135,27 +133,32 @@ class ItemPdo {
             }
         }
 
-        $where_bind_array[":offset_index"] = ($page_number - 1) * 20;
-        $offset_start = "OFFSET :offset_index";
+        $offset_start = "";
+        $offset_index = ($page_number - 1) * 20;
+        if ($offset_index > 0) {
+            // $where_bind_array[":offset_index"] = $offset_index;
+            // $offset_start = "OFFSET :offset_index";
+            $offset_start = "OFFSET $offset_index";
+        }
 
         // SQL文の一部を準備
         $where_items_sql = "$where_count_sql
             $order_by
-            $limit
+            $this->limit
             $offset_start";
 
         $items = $this->get_items_bind_keyword($dbh, $where_items_sql, $where_bind_array);
 
         return array(
-            'count' -> $count
-            ,'item_list' -> $items
+            'count' => $count
+            ,'item_list' => $items
         );
     }
 
     private function get_items_bind_count($dbh, $where_count_sql, $where_bind_array) {
 
         // SQL文を準備
-        $count_sql = "$this->$count_table
+        $count_sql = "$this->count_table
                 $where_count_sql";
 
         // PDOStatementクラスのインスタンスを生成します。
@@ -195,7 +198,7 @@ class ItemPdo {
         
         // PDO::FETCH_ASSOCは、対応するカラム名にふられているものと同じキーを付けた 連想配列として取得します。
         $result = $prepare->fetchAll(PDO::FETCH_ASSOC);
-        
+
         return $result;
     }
 
@@ -211,31 +214,28 @@ class ItemPdo {
         }
 
         return array(
-            'where_sql' -> $where_sql
-            , 'where_bind_array' -> $where_bind_array
+            'where_sql' => $where_sql
+            , 'where_bind_array' => $where_bind_array
         );
     }
 
     private function create_sql_where_category($select_category) {
-        $add_where_category += ' AND ';
         if (4 == mb_strlen($select_category)) {
-            $add_where_category += "category.category_small_cd = :category_cd";
+            return "AND category.small_category_cd = :category_cd";
         } else if (3 == mb_strlen($select_category)) {
-            $add_where_category += "category.category_middle_cd = :category_cd";
+            return "AND category.middle_category_cd = :category_cd";
         } else {
-            $add_where_category += "category.category_big_cd = :category_cd";
+            return "AND category.big_category_cd = :category_cd";
         }
-
-        return $add_where_category;
     }
 
     private function prepare_bind_value($prepare, $where_bind_array) {
         // 値のbind設定
-        foreach ($where_bind_array as $key -> $value) {
+        foreach ($where_bind_array as $key => $value) {
             $bind_value = $value;
             if (strpos($key,'keyword') !== false) {
                 // PDO::PARAM_STRは、SQL 文字列 データ型を表します。
-                $bind_value = '%'. $bind_value .'%';
+                $bind_value = '%'. $value .'%';
             }
             
             $prepare->bindValue($key, $bind_value, PDO::PARAM_STR);

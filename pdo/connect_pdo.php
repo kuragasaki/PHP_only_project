@@ -36,7 +36,7 @@ class ConnectPdo {
         try {
             // return new PDO($this->dsn, $this->user, $this->password);
             // $dbh = new PDO($this->dsn, $this->user, $this->password);
-            return new PDO("mysql:dbname=mysql;host=localhost;charset=utf8", "root", "");
+            return new PDO("mysql:dbname=about_ec_site;host=localhost;charset=utf8", "root", "");
         } catch (PDOException $e) {
             echo "接続失敗: " . $e->getMessage() . "\n";
         }

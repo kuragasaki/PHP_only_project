@@ -6,6 +6,7 @@ header {
 	position: sticky;
     position: -webkit-sticky;
     top: 0;
+	background-color: #eee;
 }
 
 #title_position {
@@ -170,4 +171,9 @@ nav {
 	font-size: 14px;
 	display: inline-block;
 	color: #fff;
+}
+
+.header_category_link, .header_category_link:hover, .header_category_link:visited {
+    color: inherit;
+	text-decoration: none;
 }
