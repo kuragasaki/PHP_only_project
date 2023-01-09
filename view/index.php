@@ -280,7 +280,7 @@
     <div id="error_message">
       <?php echo $errorMsg; ?>
     </div>
-    <form action="cart_view.html" id="itemInfo" >
+    <form action="cart_view.php" id="itemInfo" method="post">
       <table id="itemInfosTbl">
         <caption>
           <h2>Item Infos</h2>
@@ -317,13 +317,13 @@
                 <input type="checkbox" name="itemId" value=<?= $item_list[$index]["item_id"]; ?> />
               </td>
               <td class="item_data">
-                <a href="item_view.html">
+                <a href="item_view.php?itemName=<?= $item_list[$index]['item_name']; ?>">
                   <img src="" />
                   Item Image A
                 </a>
               </td>
               <td class="item_data">
-                <a href="item_view.html">
+              <a href="item_view.php?itemName=<?= $item_list[$index]['item_name']; ?>">
                   <?= $item_list[$index]["item_name"]; ?>
                 </a>
               </td>
