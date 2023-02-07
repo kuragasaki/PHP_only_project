@@ -107,7 +107,7 @@
   </head>
 
   <body>
-    <header>
+    <!-- <header>
       <div id="title_position">
         <h1 class="header_upper">
           <a href="./">
@@ -147,7 +147,9 @@
           </ul>
         </div>
       </nav>
-    </header>
+    </header> -->
+
+    <?php $Path = include(dirname(__FILE__).'/header.php'); ?>
 
     <form action="./delivery_address.html" method="post" id="cartInfo">
       <table id="cartInfosTbl">
@@ -210,8 +212,6 @@
       </div>
     </form>
 
-    <footer>
-      <h3>Example EC Site Company</h3>
-    </footer>
+    <?php $Path = include(dirname(__FILE__).'/footer.php'); ?>
   </body>
 </html>

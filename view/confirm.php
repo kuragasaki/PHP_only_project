@@ -14,7 +14,7 @@
   </head>
 
   <body>
-    <header>
+    <!-- <header>
       <div id="title_position">
         <h1 class="header_upper">
           <a href="./">
@@ -58,7 +58,9 @@
           </ul>
         </div>
       </nav>
-    </header>
+    </header> -->
+
+    <?php $Path = include(dirname(__FILE__).'/header.php'); ?>
 
     <div id="user_infos">
       <section>
@@ -137,11 +139,7 @@
       </section>
     </div>
 
-    <footer>
-      <p>
-        © All rights reserved by Example EC Site
-      </p>
-    </footer>
+    <?php $Path = include(dirname(__FILE__).'/footer.php'); ?>
 
     <script>
       // var form = document.forms[0];

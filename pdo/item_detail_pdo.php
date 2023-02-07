@@ -26,13 +26,16 @@ class CategoryPdo {
         $this->connectPdo = new ConnectPdo();
     }
 
-    function get_item_details($item_id) {
+    function get_item_details($item_ids = []) {
 
-        // $sql_where_category = $this->create_sql_where_category($category_cd);
+        $sql_where_items = $this->create_sql_where_items_and_bind_value($item_ids);
+
+        $where_items = $sql_where_items["where_items"];
+        $bind_keys = $sql_where_items["bind"];
 
         // SQL文を準備
         $sql = "$this->select_table
-            $sql_where_category";
+            $where_items";
 
         $dbh = $this->connectPdo->get_connect_info();
         // if ($dbh instanceof string) {
@@ -44,9 +47,20 @@ class CategoryPdo {
         // }
 
         // PDOStatementクラスのインスタンスを生成します。
-        $prepare = $dbh->prepare($sql);
 
-        $this->prepare_bind_value($prepare, array(":category_cd", $category_cd));
+        if (empty($bind_keys)) {
+            $this->prepare_bind_value($prepare, $bind_keys);
+
+                    // PDOStatementクラスのインスタンスを生成します。
+        $prepare = $dbh->query($count_sql);
+        
+        // クエリを実行する
+        $count = $prepare->fetchColumn();
+        } else {
+            $prepare = $dbh->prepare($sql);
+
+            $this->prepare_bind_value($prepare, $bind_keys);
+        }
 
         // プリペアドステートメントを実行する
         $prepare->execute();
@@ -61,14 +75,26 @@ class CategoryPdo {
 
     }
 
-    // private function create_sql_where_category($select_category) {
-    //     if (4 == mb_strlen($select_category)) {
-    //         return "small_category_cd = :category_cd";
-    //     } else if (3 == mb_strlen($select_category)) {
-    //         return "middle_category_cd = :category_cd AND small_category_cd is Null";
-    //     } else {
-    //         return "big_category_cd = :category_cd AND middle_category_cd is Null";
-    //     }
-    // }
+    private function create_sql_where_items_and_bind_value($select_items) {
+        $result_array = array(
+            "bind" => []
+            , "where_items" => ""
+        );
+
+        if (empty($select_items)) {
+            return result_array;
+        }
+
+        $bind_key[":item_id0"] = $select_items[0];
+        $sql_where_items = ":item_id0";
+
+        for ($index = 1; $index < count($select_items); $index++) {
+            result_array[":item_id".$index] = $select_items[$index];
+            $sql_where_items = $sql_where_items.",".":item_id".$index;
+        }
+
+        result_array["bind"] = $bind_key;
+        result_array["where_items"] = "item_id in (".$sql_where_items.")";
+    }
 }
 ?>

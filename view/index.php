@@ -100,7 +100,9 @@
   </head>
 
   <body>
-    <header>
+    	
+    <?php $Path = include(dirname(__FILE__).'/header.php'); ?>
+    <!-- <header>
       <div id="title_position">
         <h1 class="header_upper">
           <a href="./">
@@ -127,10 +129,10 @@
         <div id="nav_position">
           <ul class="main_manu">
             <li>
-              <a href="./index.php?categoryCd=01<?= $urlParamterOrder; ?>" class="header_category_link">
+              <a href="./index.php?categoryCd=<?= 01 ?>" class="header_category_link">
                 Category 1
               </a>
-              <!-- <ul>
+              <ul>
                 <li>
                   Category 1-1
                   <ul>
@@ -156,9 +158,9 @@
                   </ul>
                 </li>
               </ul> -->
-            </li>
+            <!-- </li>
             <li>
-              Category 2
+              Category 2 -->
               <!-- <ul>
                 <li>
                   Category 2-1
@@ -185,9 +187,9 @@
                   </ul>
                 </li>
               </ul> -->
-            </li>
+            <!-- </li>
             <li>
-              Category 3
+              Category 3 -->
               <!-- <ul>
                 <li>
                   Category 3-1
@@ -214,9 +216,9 @@
                   </ul>
                 </li>
               </ul> -->
-            </li>
+            <!-- </li>
             <li>
-              Category 4
+              Category 4 -->
               <!-- <ul>
                 <li>
                   Category 4-1
@@ -243,9 +245,9 @@
                   </ul>
                 </li>
               </ul> -->
-            </li>
+            <!-- </li>
             <li>
-              Category 5
+              Category 5 -->
               <!-- <ul>
                 <li>
                   Category 5-1
@@ -272,11 +274,11 @@
                   </ul>
                 </li>
               </ul> -->
-            </li>
+            <!-- </li>
           </ul>
         </div>
       </nav>
-    </header>
+    </header> -->
     <div id="error_message">
       <?php echo $errorMsg; ?>
     </div>
@@ -386,10 +388,11 @@
       </div>
     </form>
 
-    <footer>
+    <?php $Path = include(dirname(__FILE__).'/footer.php'); ?>
+    <!-- <footer>
       <p>
         © All rights reserved by Example EC Site
       </p>
-    </footer>
+    </footer> -->
   </body>
 </html>
